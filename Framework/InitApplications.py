@@ -1,3 +1,3 @@
-def initApplications():
+def initApp():
     print("Initializing applications...")
     

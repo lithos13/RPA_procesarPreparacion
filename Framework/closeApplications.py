@@ -1,3 +1,3 @@
-def closeApplications():
+def closeApp():
     print("Closing applications...")
 #
