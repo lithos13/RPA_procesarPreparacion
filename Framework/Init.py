@@ -9,8 +9,8 @@ def init():
         if general.int_numRetry == 0:
            print("first run")
            # load variables
-           closeApp.close_all_apps()
-           initApp.init_app()          
+           closeApp()
+           initApp()          
            general.bol_systemException= False
         
     except Exception as e:
