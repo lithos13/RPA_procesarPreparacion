@@ -1,4 +1,4 @@
-from Functions_and_classes.openBrowser import open_browser
+from Activities.openBrowser import open_browser
 
 def initApp():
     # Sign in on SAP Business ByDesign
