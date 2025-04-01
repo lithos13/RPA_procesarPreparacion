@@ -14,3 +14,4 @@ class general:
     row_transactionItem = None
     int_numRetry = 0
     int_totalRetry = 0
+    str_messageError = ""
