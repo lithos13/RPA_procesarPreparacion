@@ -17,7 +17,7 @@ def init():
            bol_session = sap_auth.signIn()
            print(f"Session: {bol_session}")
            if bol_session:
-               print("Session started successfully.")
+               print("Session started successfully..")
                general.bol_systemException = False
            else:
                raise Exception("Session not started.")  
