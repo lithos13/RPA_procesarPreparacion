@@ -22,7 +22,10 @@ def init():
            else:
                raise Exception("Session not started.")  
            #---------------------------------------------------------------------
-         
+
+           #Get transaction data "En preparacion"--------------------------------
+           
+           #---------------------------------------------------------------------
                  
         
     except Exception as e:
