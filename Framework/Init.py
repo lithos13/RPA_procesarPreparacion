@@ -1,9 +1,7 @@
 from Functions_and_classes.sys_context import general
 from Framework.closeApplications import closeApp
 import Functions_and_classes.sap_signIn_singOut as sap_auth
-import Activities.webActivities as webAct
 import pandas as pd
-from decouple import config
 import io 
 
 def init():
