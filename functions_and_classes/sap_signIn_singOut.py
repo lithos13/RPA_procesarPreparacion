@@ -1,10 +1,10 @@
-from Activities.openBrowser import open_browser
+import Activities.webActivities as webAct
+from Activities.webActivities import open_browser
 from decouple import config
 from botcity.web import By
 
 
 def signIn():
-    str_messageError = ""
     bol_session = False
     print("Sign in on SAP Business ByDesign")
 
@@ -18,21 +18,10 @@ def signIn():
     # Open the browser and maximize the window
     webbot = open_browser(url_pedidos)
     webbot.driver.maximize_window()
-
-    # Helper function to find and interact with elements
-    def find_and_interact(selector, by, action, value=None, error_message="Element not found"):
-        element = webbot.find_element(selector=selector, by=by)
-        if element:
-            webbot.wait_for_element_visibility(element=element, visible=True, waiting_time=10000)
-            if action == "send_keys":
-                element.send_keys(value)
-            elif action == "click":
-                element.click()
-        else:
-            raise Exception(error_message)
-
+    
+    
     # USERNAME
-    find_and_interact(
+    webAct.find_and_interact(
         selector='__control0-user-inner',
         by=By.ID,
         action="send_keys",
@@ -41,8 +30,8 @@ def signIn():
     )
 
     # PASSWORD
-    find_and_interact(
-        selector='__control0-pass-inner1',
+    webAct.find_and_interact(
+        selector='__control0-pass-inner',
         by=By.ID,
         action="send_keys",
         value=config('PASSWORD'),
@@ -50,7 +39,7 @@ def signIn():
     )
 
     # LANGUAGE
-    find_and_interact(
+    webAct.find_and_interact(
         selector='__control0-langdd-inner',
         by=By.ID,
         action="send_keys",
@@ -59,7 +48,7 @@ def signIn():
     )
 
     # CLICK ON INICIAR SESION BUTTON
-    find_and_interact(
+    webAct.find_and_interact(
         selector='__control0-logonBtn-BDI-content',
         by=By.ID,
         action="click",
@@ -67,7 +56,7 @@ def signIn():
     )
 
     # CLICK ON CONTINUAR BUTTON
-    find_and_interact(
+    webAct.find_and_interact(
         selector='__control1-continueBtn-inner',
         by=By.ID,
         action="click",
@@ -75,4 +64,4 @@ def signIn():
     )
 
     bol_session = True
-    return bol_session
+    return {"bol_session": bol_session, "webbot": webbot, "By":By}
