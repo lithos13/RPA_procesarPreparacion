@@ -2,6 +2,7 @@ import Activities.webActivities as webAct
 from Activities.webActivities import open_browser
 from decouple import config
 from botcity.web import By
+from Functions_and_classes.sys_context import general
 
 
 def signIn():
@@ -13,7 +14,8 @@ def signIn():
 
     # Check if the URL is None or empty
     if not url_pedidos:
-        raise Exception("The environment variable 'URL_PEDIDOS' is not set.")
+        general.str_messageError = "The environment variable 'URL_PEDIDOS' is not set."
+        raise Exception(general.str_messageError)
 
     # Open the browser and maximize the window
     webbot = open_browser(url_pedidos)

@@ -1,14 +1,31 @@
 # Import for the Web Bot
-from botcity.web import WebBot, Browser, By
+from botcity.web import WebBot
 # Import webdriver_manager to automatically download the WebDriver binary
 from webdriver_manager.chrome import ChromeDriverManager
+# Import default_options to set the options for the WebDriver
+from botcity.web.browsers.chrome import default_options
+from decouple import config
 
 
+# This is the path to the Chrome profile you want to use-----
+profile_path        = config('PROFILE_PATH')  
+
+def_options = default_options(
+      headless       =False,
+      user_data_dir  =profile_path      
+    ) 
+
+
+# Initialize the WebBot instance
 webbot             = WebBot()
-
+# assigning the default options to the webbot instance
+webbot.options     = def_options
+print(f"WebBot options: {webbot.options}")
 # Configure whether or not to run on headless mode
-webbot.headless    = False   
 webbot.driver_path = ChromeDriverManager().install()
+
+#------------------------------------------------------------
+
 
 # Open the browser and navigate to the URL
 # This function opens the browser and navigates to the specified URL
