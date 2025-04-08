@@ -67,3 +67,6 @@ def signIn():
 
     bol_session = True
     return {"bol_session": bol_session, "webbot": webbot, "By":By}
+
+def signOut():
+    pass

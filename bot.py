@@ -52,14 +52,13 @@ def main():
     
     # Initialize the process returns TRUE or FALSE. TRUE means that a system exception occurred and the process should be stopped.FALSE means that the process should continue.
     init()
+    if general.bol_systemException:
+        end_process()
+        return
     
-    while general.int_numRetry<= general.int_numRetry:
-        # If there is no system exception, the process continues
-        if not general.bol_systemException:
-            get_transaction()  
-        else:       
-            end_process()
-            break  
+    while general.int_numRetry<= general.int_totalRetry:
+        # Get transaction data from the DataFrame
+        get_transaction()         
 
         # If there is transaction data, the process continues
         while general.row_transactionItem is not None:
@@ -69,11 +68,15 @@ def main():
                 get_transaction() 
             else:
                 general.int_numRetry += 1
+                print(f"Retry number: {general.int_numRetry}")
                 # close all
                 break
-        # end process if there is no transaction data        
-        end_process()
-        break  
+        # end process if there is no transaction data
+        if general.row_transactionItem is None:
+            print("No transaction data available.")
+            # close all
+            end_process()
+            break        
     # end process to finish the process completely    
     end_process()      
     

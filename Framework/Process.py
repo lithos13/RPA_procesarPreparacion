@@ -4,7 +4,7 @@ from Functions_and_classes.sys_context import general
 def process():
     try:
         # Your main process logic here
-        print("Executing process...")
+        print("Executing process..."+ general.row_transactionItem["Nombre de proveedor"])
         # Example: raise BusinessException("A business error occurred")
         # Example: raise Exception("A system error occurred")
     except BusinessException as be:

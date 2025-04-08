@@ -2,9 +2,7 @@ from Functions_and_classes.sys_context import general
 from Framework.closeApplications import closeApp
 import Functions_and_classes.sap_signIn_singOut as sap_auth
 import Activities.fileActivities as fileAct
-import pandas as pd
-import io 
-import os
+from decouple import config
 
 def init():
     str_message = ""
@@ -57,13 +55,17 @@ def init():
         
         # read the excel file
         arr_session['webbot'].wait(10000)
-        str_ruta = "C:/Python/botCity/RPA_procesarPreparacion/Listadepedidos__ES.xlsx"
+        str_ruta = config('PATH_TEMP') + "Listadepedidos__ES.xlsx"
         df_excel =fileAct.read_ExcelFile(str_ruta)        
         print(f"DataFrame: {df_excel}")
-                       
-        arr_session['webbot'].wait(11000)        
+        if df_excel.empty:
+            general.str_messageError = "The Excel file (lista pedidos en preparación) is empty or no data was retrieved."
+            raise Exception(general.str_messageError)
+        else:
+            print("Data successfully retrieved from the Excel file.")       
     #---------------------------------------------------------------------
-       
+        general.df_transactionData = df_excel    
+        arr_session['webbot'].wait(11000)
     except Exception as e:
         print(f"An error occurred: {e} - {general.str_messageError}")        
         general.bol_systemException= True

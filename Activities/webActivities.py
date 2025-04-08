@@ -20,7 +20,7 @@ def_options = default_options(
 webbot             = WebBot()
 # assigning the default options to the webbot instance
 webbot.options     = def_options
-print(f"WebBot options: {webbot.options}")
+print(f"WebBot options: {profile_path}")
 # Configure whether or not to run on headless mode
 webbot.driver_path = ChromeDriverManager().install()
 
