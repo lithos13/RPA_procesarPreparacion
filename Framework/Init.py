@@ -12,7 +12,7 @@ def init():
            # load variables
            closeApp()
 
-        #Init applications--------------------------------------------------
+        #Init applications>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         print("Initializing applications...")
         # Sign in on SAP Business ByDesign    
         arr_session = sap_auth.signIn()          
@@ -23,9 +23,9 @@ def init():
         else:
             general.str_messageError = "Session not started."            
             raise Exception(general.str_messageError)  
-        #---------------------------------------------------------------------
+        #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-        #Get transaction data "En preparacion"--------------------------------           
+        #Get transaction data "En preparacion">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>      
         # Select the dropdown list
         select = arr_session['webbot'].find_element(selector='__pane1-defaultSetDDLB-arrow', by=arr_session['By'].ID)
         if select is not None:            
@@ -63,7 +63,7 @@ def init():
             raise Exception(general.str_messageError)
         else:
             print("Data successfully retrieved from the Excel file.")       
-    #---------------------------------------------------------------------
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         general.df_transactionData = df_excel    
         arr_session['webbot'].wait(11000)
     except Exception as e:

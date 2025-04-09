@@ -39,16 +39,4 @@ def open_browser(url):
    #webbot.stop_browser()    
    return webbot
 
-# Helper function to find and interact with elements
-def find_and_interact(selector, by, action, value=None, error_message="Element not found"):
-    element = webbot.find_element(selector=selector, by=by)   
-    if element:
-       webbot.wait_for_element_visibility(element=element, visible=True, waiting_time=100000)
-       if action == "send_keys":
-          element.send_keys(value)
-       elif action == "click":
-            element.click()
-       else:
-           raise Exception(error_message)
-
      

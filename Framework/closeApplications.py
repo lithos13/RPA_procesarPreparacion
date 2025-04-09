@@ -1,5 +1,7 @@
 import Activities.fileActivities as fileAct
+from decouple import config
+
 def closeApp():
     print("Closing applications...")
-    fileAct.cleanPath("C:/Python/botCity/RPA_procesarPreparacion/Listadepedidos__ES.xlsx")
+    fileAct.cleanPath(config('PATH_TEMP') + "Listadepedidos__ES.xlsx")
 #

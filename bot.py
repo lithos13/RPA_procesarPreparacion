@@ -76,19 +76,20 @@ def main():
             print("No transaction data available.")
             # close all
             end_process()
-            break        
-    # end process to finish the process completely    
-    end_process()      
-    
+            break 
+
+    if general.bol_systemException:
+        end_process()
+                      
     #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    
 
     # Uncomment to mark this task as finished on BotMaestro
-    # maestro.finish_task(
-    #     task_id=execution.task_id,
-    #     status=AutomationTaskFinishStatus.SUCCESS,
-    #     message="Task Finished OK."
-    # )
+    maestro.finish_task(
+        task_id=execution.task_id,
+        status=AutomationTaskFinishStatus.SUCCESS,
+         message="Task Finished OK."
+     )
 
 def not_found(label):
     print(f"Element not found: {label}")
