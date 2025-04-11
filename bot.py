@@ -57,6 +57,10 @@ def main():
         return
     
     while general.int_numRetry<= general.int_totalRetry:
+        # Reset the variables for each retry iteration
+        general.str_messageError    =""
+        general.bol_systemException = False
+        
         # Get transaction data from the DataFrame
         get_transaction()         
 
