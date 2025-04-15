@@ -1,6 +1,4 @@
 # Description: Conexión a la API de Google Sheets y Gmail
-import gspread
-import json
 from google.oauth2.service_account import Credentials as ServiceAccountCredentials
 from decouple import config
 
@@ -21,16 +19,6 @@ scope_gmail =[
              'https://www.googleapis.com/auth/gmail.readonly',
              'https://www.googleapis.com/auth/gmail.modify'
     ]
-#Client mail getting from json credential
-jsonFile        = open(config('SERVICE_ACCOUNT_GOOGLE_CREDENTIALS_PATH'))
-datajson        = json.load(jsonFile)            
-client_email    = datajson['client_email']
-
-#credentials to the account
-credServiceAccount = ServiceAccountCredentials.from_service_account_file(config('SERVICE_ACCOUNT_GOOGLE_CREDENTIALS_PATH'),scopes=scope_app) 
-
-# authorize the clientsheet 
-#client = gspread.authorize(credServiceAccount) 
 
 # Authorize Google Sheets and Drive using OAuth 2.0
 def authorize_google_sheets():

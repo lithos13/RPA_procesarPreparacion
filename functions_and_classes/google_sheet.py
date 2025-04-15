@@ -1,33 +1,8 @@
 import Functions_and_classes.google_connect as gc
-from decouple import config
 import pandas as pd
 #import send_email as sendE
 
 
-def get_sheet(id):
-    try:       
-        sheet           = gc.client.open_by_key(id)
-        sheet_instance  = sheet.get_worksheet(0)
-        records         = sheet_instance.get_all_records()
-        return records
-    except gc.gspread.exceptions.APIError as e:
-           error_json   = e.response.json()
-           error_status = error_json.get("error", {}).get("status") 
-           if error_status == 'PERMISSION_DENIED':
-                    msj_error="The Service Account does not have permission to read or write on the spreadsheet document. Have you shared the spreadsheet with %s?" % gc.client_email
-                    print(msj_error)
-                    
-           elif error_status == 'NOT_FOUND':
-                    msj_error="Trying to open non-existent spreadsheet document. Verify the document id exists (%s)." % config('ID_SHEET_CONFIG')
-                    print(msj_error)
-                    
-           else:       
-                msj_error="The Google API returned an error: %s" % e
-                print(msj_error)
-                
-
-    #sendE.send_Mail(config('HEAD_SUBJECT')+' '+error_status, config('EMAIL_OWNER'),msj_error, config('EMAIL_OWNER'))
-    return []
 
 def get_google_sheet_as_dataframe(sheet_id, sheet_name):
     """

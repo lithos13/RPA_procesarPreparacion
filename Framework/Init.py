@@ -33,17 +33,10 @@ def init():
         dataConfig = gs.get_google_sheet_as_dataframe(config('ID_SHEET_CONFIG'), sheet_name)
         if len(dataConfig)>0:
              general.df_dataConfig = pd.DataFrame(dataConfig)
-             # Obtain data from a specific sheet
-               # Specify the sheet name in your .env file
-             if sheet_name in general.df_dataConfig.sheet_names:
-                 general.df_dataConfig = pd.read_excel(config('ID_SHEET_CONFIG'), sheet_name=sheet_name)                 
-             else:
-                 general.str_messageError = f"Sheet '{sheet_name}' not found in the Google Sheet."
-                 raise Exception(general.str_messageError)
+             print("Data successfully retrieved from Google Sheets.")
         else:
-            general.str_messageError = "Configuration file does not found"            
+            general.str_messageError = "The Google Sheet is empty or no data was retrieved."
             raise Exception(general.str_messageError)
-
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         #Get transaction data "En preparacion">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>      
