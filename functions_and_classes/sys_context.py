@@ -10,6 +10,7 @@ import pandas as pd
 class general:
     bol_systemException = False
     df_transactionData  = pd.DataFrame()
+    df_dataConfig      = pd.DataFrame()
     int_transactionNumber = 0
     row_transactionItem = None
     int_numRetry = 0

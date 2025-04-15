@@ -1,8 +1,10 @@
 from Functions_and_classes.sys_context import general
+import Functions_and_classes.google_sheet as gs
 from Framework.closeApplications import closeApp
 import Functions_and_classes.sap_signIn_singOut as sap_auth
 import Activities.fileActivities as fileAct
 from decouple import config
+import pandas as pd
 
 def init():
     str_message = ""
@@ -23,6 +25,25 @@ def init():
         else:
             general.str_messageError = "Session not started."            
             raise Exception(general.str_messageError)  
+        #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+        #Obtein configuration data from config file>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        #dataConfig = gs.get_sheet(config('ID_SHEET_CONFIG'))
+        sheet_name = 'COD Proveedores'
+        dataConfig = gs.get_google_sheet_as_dataframe(config('ID_SHEET_CONFIG'), sheet_name)
+        if len(dataConfig)>0:
+             general.df_dataConfig = pd.DataFrame(dataConfig)
+             # Obtain data from a specific sheet
+               # Specify the sheet name in your .env file
+             if sheet_name in general.df_dataConfig.sheet_names:
+                 general.df_dataConfig = pd.read_excel(config('ID_SHEET_CONFIG'), sheet_name=sheet_name)                 
+             else:
+                 general.str_messageError = f"Sheet '{sheet_name}' not found in the Google Sheet."
+                 raise Exception(general.str_messageError)
+        else:
+            general.str_messageError = "Configuration file does not found"            
+            raise Exception(general.str_messageError)
+
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         #Get transaction data "En preparacion">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>      
