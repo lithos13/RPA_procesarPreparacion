@@ -6,9 +6,11 @@ Application Contexts: In frameworks like Flask, a context object is used to stor
 Thread or Task Contexts: Context objects can store data specific to a thread or task, ensuring that the data is isolated and not shared across threads.
 Custom Contexts: Developers can create their own context objects to encapsulate shared state or configuration for a specific part of their application. """
 import pandas as pd
+from datetime import datetime
 
 class general:
     bol_systemException = False
+    bol_bussinessException = False
     df_transactionData  = pd.DataFrame()
     df_dataConfig      = pd.DataFrame()
     int_transactionNumber = 0
@@ -16,3 +18,5 @@ class general:
     int_numRetry = 0
     int_totalRetry = 0
     str_messageError = ""
+    date_current: datetime = None
+    str_currentDay = None

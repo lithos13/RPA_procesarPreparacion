@@ -66,15 +66,23 @@ def main():
 
         # If there is transaction data, the process continues
         while general.row_transactionItem is not None:
-            process()
-            if not general.bol_systemException:
-                general.int_transactionNumber += 1
-                get_transaction() 
-            else:
-                general.int_numRetry += 1
-                print(f"Retry number: {general.int_numRetry}")
-                # close all
-                break
+            str_typeException = process()
+
+            match str_typeException:
+                case "BusinessException":
+                    general.int_transactionNumber += 1
+                    general.bol_bussinessException = False
+                    general.str_messageError       = ""
+                    get_transaction() 
+                case "SystemException":
+                    general.int_numRetry += 1
+                    print(f"Retry number: {general.int_numRetry}")
+                    # close all
+                    break   
+                case "":
+                    general.int_transactionNumber += 1
+                    get_transaction()# If the process is successful, get the next transaction           
+            
         # end process if there is no transaction data
         if general.row_transactionItem is None:
             print("No transaction data available.")

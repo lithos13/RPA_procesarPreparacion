@@ -4,7 +4,7 @@ import xlwings as xw
 from Functions_and_classes.sys_context import general
 
 
-def read_ExcelFile(str_ruta):
+def read_ExcelFile(str_ruta, in_skiprows, in_usecols):
     
     # app allow  to open the file in background 
     app = xw.App(visible=False)  
@@ -21,7 +21,7 @@ def read_ExcelFile(str_ruta):
         wb.save()
         wb.close()
         # the data stars on row 5 and column B to I
-        df = pd.read_excel(str_ruta, skiprows=4, usecols="B:I", engine='openpyxl')               
+        df = pd.read_excel(str_ruta, skiprows=in_skiprows, usecols=in_usecols, engine='openpyxl')               
         # Remove the file after reading
         os.remove(str_ruta)
         return df       

@@ -1,31 +1,37 @@
 # Description: Conexión a la API de Google Sheets y Gmail
 from google.oauth2.service_account import Credentials as ServiceAccountCredentials
 from decouple import config
-
-# Import the necessary libraries to access the Gmail API
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import os
 
-# defining the scope of the application
-scope_app =[
-             'https://www.googleapis.com/auth/spreadsheets',
-             'https://www.googleapis.com/auth/drive'
-            ]  
-
-scope_gmail =[            
-             'https://www.googleapis.com/auth/gmail.readonly',
-             'https://www.googleapis.com/auth/gmail.modify'
+# Define the scopes for the application
+SCOPES = {
+    "sheets": [
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive'
+    ],
+    "gmail": [
+        'https://www.googleapis.com/auth/gmail.readonly',
+        'https://www.googleapis.com/auth/gmail.modify'
     ]
+}
 
-# Authorize Google Sheets and Drive using OAuth 2.0
-def authorize_google_sheets():
+# General function to handle OAuth 2.0 authorization
+def authorize_google_api(scope_key, token_file_name):
+    """
+    Authorizes access to a Google API using OAuth 2.0.
+
+    :param scope_key: The key to select the appropriate scope (e.g., 'sheets', 'gmail').
+    :param token_file_name: The name of the token file to store/reuse credentials.
+    :return: The authorized Google API client.
+    """
     creds = None
-    # Check if token.json exists (to reuse the token)
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', scope_app)
+    # Check if token file exists (to reuse the token)
+    if os.path.exists(token_file_name):
+        creds = Credentials.from_authorized_user_file(token_file_name, SCOPES[scope_key])
 
     # If no valid credentials are available, request authorization
     if not creds or not creds.valid:
@@ -33,41 +39,31 @@ def authorize_google_sheets():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                config('AUTH_GOOGLE_CREDENTIALS_PATH'), scope_app
+                config('AUTH_GOOGLE_CREDENTIALS_PATH'), SCOPES[scope_key]
             )
-            # Explicitly request offline access to get a refresh_token
             creds = flow.run_local_server(port=8080, access_type='offline', prompt='consent')
 
         # Save the credentials for the next run
-        with open('token.json', 'w') as token_file:
+        with open(token_file_name, 'w') as token_file:
             token_file.write(creds.to_json())
 
-    # Build the Google Sheets API client
-    service = build('sheets', 'v4', credentials=creds)
-    return service
+    return creds
 
-# authorize the client gmail
+# Authorize Google Sheets API
+def authorize_google_sheets():
+    """
+    Authorizes access to the Google Sheets API.
+    :return: The Google Sheets API client.
+    """
+    creds = authorize_google_api("sheets", "token_sheets.json")
+    return build('sheets', 'v4', credentials=creds)
+
+# Authorize Gmail API
 def gmail_authorize():
-    print(f'autorizando...{config("CREDENTIALS")}')
     """
-    Autoriza el acceso a la API de Gmail y reutiliza el token si es posible.
+    Authorizes access to the Gmail API.
+    :return: The Gmail API client.
     """
-    credAuth = None
-    # Reutiliza el token si existe
-    if os.path.exists('token.json'):
-        credAuth = Credentials.from_authorized_user_file('token.json', scope_gmail)
-    
-    # Si no hay credenciales válidas, solicita autorización
-    if not credAuth or not credAuth.valid:
-        if credAuth and credAuth.expired and credAuth.refresh_token:
-            credAuth.refresh(Request())  # Renueva el token automáticamente
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(config("CREDENTIALS"), scope_gmail)
-            credAuth = flow.run_local_server(port=0)
-            # Guarda las credenciales para la próxima vez
-            with open('token.json', 'w') as token_file:
-                token_file.write(credAuth.to_json())
-
-    # Construye el cliente de Gmail
-    service = build('gmail', 'v1', credentials=credAuth)
-    return service
+    print(f"Authorizing Gmail API using credentials from {config('AUTH_GOOGLE_CREDENTIALS_PATH')}")
+    creds = authorize_google_api("gmail", "token_gmail.json")
+    return build('gmail', 'v1', credentials=creds)

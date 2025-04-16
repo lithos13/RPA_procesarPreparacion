@@ -4,10 +4,35 @@ import Activities.webActivities as webAct
 from botcity.web import By
 
 def process():
+    str_typException =""
     try:
         # Your main process logic here
-        print("Executing process..."+ general.row_transactionItem["Nombre de proveedor"])
-        # validating if the ID de pedido de compra is on screen        
+        print("Executing process..."+ general.row_transactionItem["Nombre de proveedor"] + " - " + str(general.row_transactionItem["ID de proveedor"]))
+
+        #looking supplier ID in the COD Proveedores sheet-----------------------------------
+        df_rowProveedorConfig = general.df_dataConfig[general.df_dataConfig['ID SAP'] == str(general.row_transactionItem["ID de proveedor"])]
+        if not df_rowProveedorConfig.empty:
+                str_tipoProveedor = df_rowProveedorConfig['PREVISIÓN'].iloc[0]
+        else:
+                general.str_messageError = "Proveedor no encontrado en la configuración de proveedores"
+                raise BusinessException(general.str_messageError)
+        #-------------------------------------------------------------------------------------
+
+        # when the supplier is IMPORTADOS, let's check if the current day is a purchase day---------
+        if str_tipoProveedor == "IMPORTADOS":
+            arr_purchaseDays = list(map(str, df_rowProveedorConfig['DÍAS DE COMPRA'].iloc[0].split('-')))
+            bol_purchaseDay  = general.str_currentDay in arr_purchaseDays
+            # Check if the current day is a purchase day for the supplier
+            if bol_purchaseDay:
+                # Proceed with the order
+                pass
+            else:
+                #log no es el dia de compra para el proveedor
+                return
+        else:
+            # when the supplier is NACIONAL, let's proceed to the order
+            pass       
+        #---------------------------------------------------------------------------------------------
 
         # obtein the "ID de pedido de compra" from the transaction item
         pedido_id       = str(general.row_transactionItem["ID de pedido de compra"])
@@ -20,9 +45,9 @@ def process():
             webAct.webbot.enter()
             webAct.webbot.wait(2000) 
         else:
-            general.str_messageError = "The input field for searching the ID de pedido de compra was not found."
-            general.bol_systemException = True
-            return        
+            general.str_messageError = "el campo de busqueda para buscar el pedido en la tabla no fue encontrado."
+            raise Exception(general.str_messageError)           
+            
 
         # Once the ID de pedido de compra is on screen, click on it
         pedido_selector = f"//a[contains(text(), '{pedido_id}')]"
@@ -35,48 +60,44 @@ def process():
             editar_selector = "//span[contains(text(), 'Editar')]"
             btnEditar       = wait_and_click(editar_selector, by=By.XPATH)          
         else:
-            general.str_messageError    = "The ID de pedido de compra "+pedido_id+" was not found in the table."
-            general.bol_systemException = True
-            return
+            general.str_messageError    = "El ID pedido de compra: "+pedido_id+" no se encontró en la tabla."
+            raise Exception(general.str_messageError)  
         
         # if editing is successful, click on "Pedir"
         if btnEditar:
             pedir_selector = "//span[contains(text(), 'Pedir')]"                  
             btnPedir = wait_and_click(pedir_selector, by=By.XPATH)
         else:
-            general.str_messageError    = "The Edit button was not found."
-            general.bol_systemException = True
-            return
+            general.str_messageError    = "El botón editar no fue encontrado."
+            raise Exception(general.str_messageError)  
         
          # if pedir is successful, click on "Pedir"
         if btnPedir:
+            print("Pedido realizado con éxito.")
             pass
         else:
-            general.str_messageError    = "The Pedir button was not found."
-            general.bol_systemException = True
-            return
+            general.str_messageError    = "El botón pedir no fue encontrado."
+            raise Exception(general.str_messageError)  
         
         # if the process is successful, click on "Cerrar" pedido
         cerrar_selector = "//span[contains(text(), 'Cerrar')]"
-        btnCerrar = wait_and_click(cerrar_selector, by=By.XPATH)
-       
-        ## Getting text property, you can access other properties through the WebElement object
-        # print(element.text)
-        
-        
+        btnCerrar = wait_and_click(cerrar_selector, by=By.XPATH)       
 
-        # Example: raise BusinessException("A business error occurred")
-        # Example: raise Exception("A system error occurred")
+    # Type of exception handling
     except BusinessException as be:
         # Handle business exceptions
         print(f"Business exception caught: {be}")
+        general.bol_bussinessException= True
+        str_typException = "BusinessException"
     except Exception as e:
         # Handle system exceptions
         print(f"System exception caught: {e}")
         general.bol_systemException= True
+        str_typException = "SystemException"
     finally:
         # Cleanup or finalization code
         print("Process finished.")
+        return str_typException
 
 def wait_and_click(selector, by, wait_time=2000):
     element = webAct.webbot.find_element(selector=selector, by=by)

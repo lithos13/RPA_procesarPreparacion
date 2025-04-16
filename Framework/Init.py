@@ -1,10 +1,11 @@
 from Functions_and_classes.sys_context import general
-import Functions_and_classes.google_sheet as gs
+import Functions_and_classes.google_workspace_activities as gs
 from Framework.closeApplications import closeApp
 import Functions_and_classes.sap_signIn_singOut as sap_auth
 import Activities.fileActivities as fileAct
 from decouple import config
 import pandas as pd
+from datetime import datetime
 
 def init():
     str_message = ""
@@ -27,16 +28,23 @@ def init():
             raise Exception(general.str_messageError)  
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-        #Obtein configuration data from config file>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        #dataConfig = gs.get_sheet(config('ID_SHEET_CONFIG'))
+        #obtein the current date and time>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        # Get the current date and time
+        general.date_current = datetime.now()
+
+        # Extract the current day as a string
+        general.str_currentDay = general.date_current.strftime("%d")
+        #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+        #Obtein configuration data from config file>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>        
         sheet_name = 'COD Proveedores'
         dataConfig = gs.get_google_sheet_as_dataframe(config('ID_SHEET_CONFIG'), sheet_name)
         if len(dataConfig)>0:
-             general.df_dataConfig = pd.DataFrame(dataConfig)
-             print("Data successfully retrieved from Google Sheets.")
+            general.df_dataConfig = pd.DataFrame(dataConfig)                  
         else:
-            general.str_messageError = "The Google Sheet is empty or no data was retrieved."
-            raise Exception(general.str_messageError)
+            general.str_messageError = "The Google Sheet 'cod proveedores' is empty or no data was retrieved."
+            raise Exception(general.str_messageError)        
+        
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         #Get transaction data "En preparacion">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>      
@@ -53,7 +61,7 @@ def init():
             element = arr_session['webbot'].find_element(selector="//li[contains(text(), 'Pedidos de compra en preparación')]", by=arr_session['By'].XPATH)            
             element.click()          
         else:
-            general.str_messageError    = "The element 'lista de estados de pedidos' was not found."
+            general.str_messageError    = "The element dropdown list 'lista de estados de pedidos' was not found."
             raise Exception(general.str_messageError)        
        
         arr_session['webbot'].wait(2000)
@@ -70,16 +78,17 @@ def init():
         # read the excel file
         arr_session['webbot'].wait(10000)
         str_ruta = config('PATH_TEMP') + "Listadepedidos__ES.xlsx"
-        df_excel =fileAct.read_ExcelFile(str_ruta)        
-        print(f"DataFrame: {df_excel}")
+        df_excel = fileAct.read_ExcelFile(str_ruta, 4, "B:J")                
         if df_excel.empty:
-            general.str_messageError = "The Excel file (lista pedidos en preparación) is empty or no data was retrieved."
+            general.str_messageError = "El archivo de Excel (lista pedidos en preparación) está vacio o no se han recuperado datos."
             raise Exception(general.str_messageError)
         else:
             print("Data successfully retrieved from the Excel file.")       
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         general.df_transactionData = df_excel    
         arr_session['webbot'].wait(11000)
+
+        
     except Exception as e:
         print(f"An error occurred: {e} - {general.str_messageError}")        
         general.bol_systemException= True
