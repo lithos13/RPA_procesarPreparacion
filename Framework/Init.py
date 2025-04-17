@@ -42,7 +42,7 @@ def init():
         if len(dataConfig)>0:
             general.df_dataConfig = pd.DataFrame(dataConfig)                  
         else:
-            general.str_messageError = "The Google Sheet 'cod proveedores' is empty or no data was retrieved."
+            general.str_messageError = "El sheet de configuración 'COD Proveedores' no fue encontrado."
             raise Exception(general.str_messageError)        
         
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -61,7 +61,7 @@ def init():
             element = arr_session['webbot'].find_element(selector="//li[contains(text(), 'Pedidos de compra en preparación')]", by=arr_session['By'].XPATH)            
             element.click()          
         else:
-            general.str_messageError    = "The element dropdown list 'lista de estados de pedidos' was not found."
+            general.str_messageError    = "La lista seleccionable 'lista de estados de pedidos' no fue encontrada."
             raise Exception(general.str_messageError)        
        
         arr_session['webbot'].wait(2000)

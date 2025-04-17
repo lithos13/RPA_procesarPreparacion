@@ -12,22 +12,22 @@ def process():
         #looking supplier ID in the COD Proveedores sheet-----------------------------------
         df_rowProveedorConfig = general.df_dataConfig[general.df_dataConfig['ID SAP'] == str(general.row_transactionItem["ID de proveedor"])]
         if not df_rowProveedorConfig.empty:
-                str_tipoProveedor = df_rowProveedorConfig['PREVISIÓN'].iloc[0]
+            str_tipoProveedor = df_rowProveedorConfig['PREVISIÓN'].iloc[0]
         else:
-                general.str_messageError = "Proveedor no encontrado en la configuración de proveedores"
-                raise BusinessException(general.str_messageError)
+            general.str_messageError = "Proveedor no encontrado en la configuración de proveedores"
+            raise BusinessException(general.str_messageError)
         #-------------------------------------------------------------------------------------
 
         # when the supplier is IMPORTADOS, let's check if the current day is a purchase day---------
         if str_tipoProveedor == "IMPORTADOS":
             arr_purchaseDays = list(map(str, df_rowProveedorConfig['DÍAS DE COMPRA'].iloc[0].split('-')))
             bol_purchaseDay  = general.str_currentDay in arr_purchaseDays
-            # Check if the current day is a purchase day for the supplier
+           # Check if the current day is a purchase day for the supplier
             if bol_purchaseDay:
-                # Proceed with the order
+                    # Proceed with the order
                 pass
             else:
-                #log no es el dia de compra para el proveedor
+                    #log no es el dia de compra para el proveedor
                 return
         else:
             # when the supplier is NACIONAL, let's proceed to the order
